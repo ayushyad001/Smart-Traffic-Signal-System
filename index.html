@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Traffic Signal System — Pro UI (HTML/CSS/JS)</title>
+  <style>
+    :root{
+      --bg:#070a14;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.045);
+      --stroke: rgba(255,255,255,.10);
+      --text:#e9eefc;
+      --muted:#a9b6d8;
+
+      --red:#ff3b3b;
+      --yellow:#ffcc00;
+      --green:#20ff87;
+      --cyan:#4fd1ff;
+      --violet:#9b7bff;
+      --pink:#ff4fd8;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1000px 700px at 20% 10%, rgba(79,209,255,.16), transparent 60%),
+        radial-gradient(900px 650px at 80% 30%, rgba(155,123,255,.16), transparent 60%),
+        radial-gradient(900px 650px at 40% 95%, rgba(255,79,216,.12), transparent 60%),
+        var(--bg);
+      overflow-x:hidden;
+    }
+
+    header{
+      position:sticky; top:0;
+      z-index:50;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(to bottom, rgba(7,10,20,.85), rgba(7,10,20,.55));
+      border-bottom:1px solid var(--stroke);
+    }
+    .wrap{max-width:1200px; margin:0 auto; padding:14px 16px;}
+    .top{
+      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    }
+    .brand{
+      display:flex; gap:10px; align-items:center;
+    }
+    .logo{
+      width:38px; height:38px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(79,209,255,.35), rgba(155,123,255,.35), rgba(255,79,216,.25));
+      border:1px solid var(--stroke);
+      box-shadow: 0 0 30px rgba(79,209,255,.18);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo::after{
+      content:"";
+      position:absolute; inset:-40px;
+      background: conic-gradient(from 30deg, transparent, rgba(255,255,255,.16), transparent);
+      animation: spin 5.5s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    h1{margin:0; font-size:16px; letter-spacing:.3px}
+    .sub{margin:2px 0 0; color:var(--muted); font-size:12px}
+
+    .pillRow{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .pill{
+      padding:6px 10px; border-radius:999px;
+      background: rgba(255,255,255,.05);
+      border:1px solid var(--stroke);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .pill b{color:var(--text)}
+    .liveDot{
+      display:inline-flex; gap:6px; align-items:center;
+    }
+    .dot{
+      width:8px; height:8px; border-radius:99px;
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(32,255,135,.7);
+      animation: pulse 1.3s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{ transform:scale(1); opacity:1 }
+      50%{ transform:scale(1.25); opacity:.55 }
+    }
+
+    main{max-width:1200px; margin:0 auto; padding:16px;}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .cardHead{
+      padding:12px 14px;
+      display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .cardBody{padding:14px}
+
+    .btnRow{display:flex; gap:8px; flex-wrap:wrap}
+    .btn{
+      cursor:pointer;
+      border:none;
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:800;
+      color:var(--text);
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      transition:.15s transform, .15s filter, .15s background;
+    }
+    .btn:hover{filter:brightness(1.06)}
+    .btn:active{transform:scale(.98)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(79,209,255,.22), rgba(155,123,255,.22));
+      box-shadow: 0 0 24px rgba(79,209,255,.12);
+    }
+    .btn.danger{
+      background: linear-gradient(135deg, rgba(255,59,59,.22), rgba(255,79,216,.12));
+      box-shadow: 0 0 24px rgba(255,59,59,.12);
+    }
+    .btn.green{
+      background: linear-gradient(135deg, rgba(32,255,135,.22), rgba(79,209,255,.12));
+      box-shadow: 0 0 24px rgba(32,255,135,.10);
+    }
+
+    .seg{
+      display:flex; background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      overflow:hidden;
+    }
+    .seg button{
+      flex:1;
+      padding:10px 10px;
+      border:none;
+      background:transparent;
+      color:var(--muted);
+      font-weight:900;
+      cursor:pointer;
+    }
+    .seg button.active{
+      color:var(--text);
+      background: rgba(255,255,255,.08);
+    }
+
+    /* Intersection canvas */
+    .arena{
+      position:relative;
+      height:520px;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(600px 420px at 50% 50%, rgba(79,209,255,.10), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.14));
+    }
+    @media (max-width: 600px){ .arena{height:460px} }
+
+    .road{
+      position:absolute; left:50%; top:50%;
+      transform:translate(-50%,-50%);
+      width:78%;
+      height:78%;
+      border-radius:28px;
+      background: rgba(255,255,255,.03);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+    .crossV, .crossH{
+      position:absolute;
+      background: rgba(0,0,0,.55);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+    .crossV{
+      width:24%;
+      height:100%;
+      left:50%; top:0;
+      transform:translateX(-50%);
+    }
+    .crossH{
+      height:24%;
+      width:100%;
+      top:50%; left:0;
+      transform:translateY(-50%);
+    }
+    .laneLineV, .laneLineH{
+      position:absolute;
+      opacity:.22;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.8) 0 10px,
+        transparent 10px 22px
+      );
+    }
+    .laneLineV{ width:3px; height:100%; left:50%; top:0; transform:translateX(-50%); }
+    .laneLineH{
+      background: repeating-linear-gradient(
+        to right,
+        rgba(255,255,255,.8) 0 10px,
+        transparent 10px 22px
+      );
+      height:3px; width:100%; top:50%; left:0; transform:translateY(-50%);
+    }
+
+    .zebra{
+      position:absolute;
+      width:24%;
+      height:24%;
+      left:50%; top:50%;
+      transform:translate(-50%,-50%);
+      border-radius:12px;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,.18) 0 10px,
+        transparent 10px 18px
+      );
+      opacity:.6;
+      filter: blur(.1px);
+    }
+
+    /* signals on corners */
+    .sig{
+      position:absolute;
+      width:48px;
+      padding:10px 10px;
+      border-radius:16px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: 0 0 24px rgba(79,209,255,.08);
+      display:flex; flex-direction:column; gap:8px; align-items:center;
+      backdrop-filter: blur(10px);
+    }
+    .bulb{
+      width:14px; height:14px; border-radius:50%;
+      background: rgba(17,24,39,.8);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.10);
+      opacity:.35;
+    }
+    .bulb.on{ opacity:1; }
+    .bulb.red.on{ background:var(--red); box-shadow:0 0 14px rgba(255,59,59,.7); }
+    .bulb.yellow.on{ background:var(--yellow); box-shadow:0 0 14px rgba(255,204,0,.65); }
+    .bulb.green.on{ background:var(--green); box-shadow:0 0 14px rgba(32,255,135,.65); }
+
+    /* positions */
+    .sig.n{ left:52%; top:8%; transform:translateX(-50%); }
+    .sig.e{ right:8%; top:52%; transform:translateY(-50%); }
+    .sig.s{ left:48%; bottom:8%; transform:translateX(-50%); }
+    .sig.w{ left:8%; top:48%; transform:translateY(-50%); }
+
+    .laneLabel{
+      position:absolute;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color:var(--muted);
+      font-size:12px;
+      backdrop-filter: blur(10px);
+    }
+    .laneLabel b{color:var(--text)}
+    .laneLabel.n{ left:50%; top:72px; transform:translateX(-50%); }
+    .laneLabel.e{ right:72px; top:50%; transform:translateY(-50%); }
+    .laneLabel.s{ left:50%; bottom:72px; transform:translateX(-50%); }
+    .laneLabel.w{ left:72px; top:50%; transform:translateY(-50%); }
+
+    /* cars */
+    .car{
+      position:absolute;
+      width:18px; height:10px;
+      border-radius:6px;
+      background: linear-gradient(135deg, rgba(79,209,255,.9), rgba(155,123,255,.85));
+      box-shadow: 0 0 18px rgba(79,209,255,.18);
+      opacity:.95;
+      transition: transform 80ms linear;
+    }
+    .car.alt{
+      background: linear-gradient(135deg, rgba(255,79,216,.9), rgba(255,204,0,.85));
+      box-shadow: 0 0 18px rgba(255,79,216,.14);
+    }
+    .car.emg{
+      background: linear-gradient(135deg, rgba(255,59,59,.95), rgba(255,204,0,.9));
+      box-shadow: 0 0 22px rgba(255,59,59,.18);
+    }
+
+    /* Right panel */
+    .kpiGrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .kpi{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .kpi .label{color:var(--muted); font-size:12px}
+    .kpi .val{font-size:22px; font-weight:1000; margin-top:4px}
+    .kpi .hint{color:#b7c3e6; font-size:12px; margin-top:6px}
+
+    .panel{
+      margin-top:12px;
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.035);
+    }
+    .panel h3{margin:0 0 8px; font-size:13px; color:#d8e4ff}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, monospace}
+
+    .bars{display:grid; gap:8px}
+    .barRow{display:flex; gap:10px; align-items:center}
+    .barRow .name{width:62px; color:var(--muted); font-size:12px}
+    .bar{
+      flex:1; height:10px; border-radius:999px;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+    }
+    .fill{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(79,209,255,.95), rgba(32,255,135,.95));
+      box-shadow: 0 0 16px rgba(79,209,255,.14);
+    }
+    .num{width:44px; text-align:right; color:#dbeafe; font-size:12px}
+
+    .log{
+      margin-top:10px;
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .logHead{
+      padding:10px 12px;
+      background: rgba(255,255,255,.04);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px;
+    }
+    .logBody{
+      max-height:220px;
+      overflow:auto;
+      font-size:12px;
+    }
+    .logItem{
+      padding:9px 12px;
+      border-bottom:1px dashed rgba(255,255,255,.08);
+      color:#e6f0ff;
+    }
+    .badge{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      font-size:11px;
+      color:#dbeafe;
+      margin-left:6px;
+    }
+    .badge.g{border-color: rgba(32,255,135,.35); color:#bfffe0}
+    .badge.y{border-color: rgba(255,204,0,.35); color:#fff2b3}
+    .badge.r{border-color: rgba(255,59,59,.35); color:#ffd0d0}
+    .badge.p{border-color: rgba(155,123,255,.35); color:#e3dbff}
+
+    .foot{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+    }
+    .sliderRow{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    input[type="range"]{accent-color: #4fd1ff}
+    .tiny{font-size:12px; color:var(--muted)}
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>Smart Traffic Signal System <span style="color:var(--muted); font-weight:800;">(Density + Fairness)</span></h1>
+          <div class="sub">Animated 4-way intersection • AI Smart vs Fixed • Emergency + Pedestrian • CSV Logs</div>
+        </div>
+      </div>
+      <div class="pillRow">
+        <div class="pill liveDot"><span class="dot" id="liveDot"></span> <span>System: <b id="sysState">Stopped</b></span></div>
+        <div class="pill">Mode: <b id="modeText">SMART</b></div>
+        <div class="pill">Phase: <b id="phaseText">IDLE</b></div>
+        <div class="pill">Active: <b id="activeText">—</b></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <!-- LEFT: Intersection -->
+    <section class="card">
+      <div class="cardHead">
+        <div class="btnRow">
+          <button class="btn primary" id="startBtn">Start</button>
+          <button class="btn" id="pauseBtn">Pause</button>
+          <button class="btn danger" id="resetBtn">Reset</button>
+        </div>
+
+        <div class="seg" aria-label="mode">
+          <button id="smartBtn" class="active">SMART AI</button>
+          <button id="fixedBtn">FIXED</button>
+        </div>
+
+        <div class="btnRow">
+          <button class="btn green" id="emgBtn">🚑 Emergency</button>
+          <button class="btn" id="pedBtn">🚶 Pedestrian</button>
+          <button class="btn" id="exportBtn">Export CSV</button>
+        </div>
+      </div>
+
+      <div class="cardBody">
+        <div class="arena" id="arena">
+          <div class="road">
+            <div class="crossV"></div>
+            <div class="crossH"></div>
+            <div class="laneLineV"></div>
+            <div class="laneLineH"></div>
+            <div class="zebra" id="zebra"></div>
+          </div>
+
+          <!-- signals -->
+          <div class="sig n" id="sigN">
+            <div class="bulb red"></div>
+            <div class="bulb yellow"></div>
+            <div class="bulb green"></div>
+          </div>
+          <div class="sig e" id="sigE">
+            <div class="bulb red"></div>
+            <div class="bulb yellow"></div>
+            <div class="bulb green"></div>
+          </div>
+          <div class="sig s" id="sigS">
+            <div class="bulb red"></div>
+            <div class="bulb yellow"></div>
+            <div class="bulb green"></div>
+          </div>
+          <div class="sig w" id="sigW">
+            <div class="bulb red"></div>
+            <div class="bulb yellow"></div>
+            <div class="bulb green"></div>
+          </div>
+
+          <!-- lane labels -->
+          <div class="laneLabel n">N <b id="qN">0</b></div>
+          <div class="laneLabel e">E <b id="qE">0</b></div>
+          <div class="laneLabel s">S <b id="qS">0</b></div>
+          <div class="laneLabel w">W <b id="qW">0</b></div>
+
+          <!-- cars container -->
+          <div id="carsLayer"></div>
+        </div>
+
+        <div class="panel" style="margin-top:12px;">
+          <h3>Traffic Generator</h3>
+          <div class="sliderRow">
+            <span class="tiny">Spawn Rate</span>
+            <input type="range" id="spawnRate" min="0" max="6" value="3"/>
+            <span class="mono" id="spawnVal">3</span>
+            <span class="tiny">Clear Rate (green)</span>
+            <input type="range" id="clearRate" min="1" max="5" value="2"/>
+            <span class="mono" id="clearVal">2</span>
+            <span class="tiny">Speed</span>
+            <input type="range" id="speed" min="1" max="6" value="3"/>
+            <span class="mono" id="speedVal">3</span>
+          </div>
+          <div class="foot">
+            Tip: Spawn increase karo → congestion badhega, Smart AI better perform karega. Fixed mode me wait time zyada dikhega.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Dashboard -->
+    <aside class="card">
+      <div class="cardHead">
+        <div>
+          <div class="tiny">Decision Engine</div>
+          <div style="font-weight:1000; font-size:16px" id="decisionTitle">—</div>
+          <div class="tiny" id="decisionReason">—</div>
+        </div>
+        <div style="text-align:right">
+          <div class="tiny">Countdown</div>
+          <div style="font-size:30px; font-weight:1000" id="countdown">—</div>
+        </div>
+      </div>
+
+      <div class="cardBody">
+        <div class="kpiGrid">
+          <div class="kpi">
+            <div class="label">Avg Wait</div>
+            <div class="val" id="avgWait">0s</div>
+            <div class="hint">Lower = better</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Max Wait</div>
+            <div class="val" id="maxWait">0s</div>
+            <div class="hint">Fairness avoids starvation</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Throughput</div>
+            <div class="val" id="throughput">0</div>
+            <div class="hint">Vehicles cleared</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Green Utilization</div>
+            <div class="val" id="util">0%</div>
+            <div class="hint">No idle green</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Live Density (Queues)</h3>
+          <div class="bars" id="bars"></div>
+        </div>
+
+        <div class="log">
+          <div class="logHead">
+            <b>Event Log</b>
+            <div class="btnRow">
+              <button class="btn" id="clearLogBtn">Clear</button>
+            </div>
+          </div>
+          <div class="logBody" id="logBody"></div>
+        </div>
+
+        <div class="foot">
+          <b>SMART:</b> max density lane → dynamic green time + fairness.<br/>
+          <b>FIXED:</b> round-robin green time (constant).<br/>
+          <b>Emergency:</b> preempts to requested lane instantly.
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script>
+/* =========================
+   PRO SMART TRAFFIC SIM (JS)
+   - Animated cars
+   - SMART vs FIXED
+   - Emergency + Pedestrian
+   - CSV export
+========================= */
+
+const LANES = ["N","E","S","W"];
+const LANE_NAMES = {N:"North", E:"East", S:"South", W:"West"};
+const TICK_MS = 250;          // simulation tick
+const UI_SECOND = 1000;       // for "seconds" counters (phase timers)
+
+const CFG = {
+  baseGreen: 8, minGreen: 8, maxGreen: 40,
+  k: 2,                 // green = base + k*density
+  yellow: 3,
+  fixedGreen: 15,
+  maxWait: 55,          // fairness threshold
+};
+
+let running = false;
+let mode = "SMART";     // SMART / FIXED
+let phase = "IDLE";     // GREEN / YELLOW / PED / IDLE
+let activeLane = "N";
+let phaseRemaining = 0; // in seconds
+let secAccumulator = 0; // ms for 1-second decrement
+
+// traffic state
+let queue = {N:7, E:4, S:6, W:3};
+let wait =  {N:0, E:0, S:0, W:0};
+let totalCleared = 0;
+
+// utilization stats
+let greenSecondsTotal = 0;
+let greenUsefulSeconds = 0;
+
+// emergency + ped
+let emergencyRequested = null;  // lane
+let pedRequested = false;
+let pedRemaining = 0;
+
+// generator controls
+let spawnRate = 3;       // avg cars per second distributed
+let clearRate = 2;       // cars cleared per second on green
+let speed = 3;           // animation speed
+
+// car animation pool
+const carsLayer = document.getElementById("carsLayer");
+const arena = document.getElementById("arena");
+let carId = 0;
+const cars = []; // {id, lane, t, el, isEmergency, alt}
+
+/* ============ UI refs ============ */
+const sysState = document.getElementById("sysState");
+const liveDot = document.getElementById("liveDot");
+const modeText = document.getElementById("modeText");
+const phaseText = document.getElementById("phaseText");
+const activeText = document.getElementById("activeText");
+
+const decisionTitle = document.getElementById("decisionTitle");
+const decisionReason = document.getElementById("decisionReason");
+const countdownEl = document.getElementById("countdown");
+
+const avgWaitEl = document.getElementById("avgWait");
+const maxWaitEl = document.getElementById("maxWait");
+const throughputEl = document.getElementById("throughput");
+const utilEl = document.getElementById("util");
+
+const qN = document.getElementById("qN");
+const qE = document.getElementById("qE");
+const qS = document.getElementById("qS");
+const qW = document.getElementById("qW");
+
+const barsEl = document.getElementById("bars");
+const logBody = document.getElementById("logBody");
+
+const sig = {
+  N: document.getElementById("sigN"),
+  E: document.getElementById("sigE"),
+  S: document.getElementById("sigS"),
+  W: document.getElementById("sigW"),
+};
+const zebra = document.getElementById("zebra");
+
+/* ============ Logging + CSV ============ */
+const csvRows = [];
+function log(msg){
+  const t = new Date().toLocaleTimeString();
+  const div = document.createElement("div");
+  div.className = "logItem";
+  div.innerHTML = `<b>${t}</b> — ${msg}`;
+  logBody.prepend(div);
+}
+function pushCSV(eventType, extra={}){
+  const now = new Date();
+  const row = {
+    iso: now.toISOString(),
+    mode,
+    phase,
+    active: activeLane,
+    qN: queue.N, qE: queue.E, qS: queue.S, qW: queue.W,
+    wN: wait.N,  wE: wait.E,  wS: wait.S,  wW: wait.W,
+    phaseRemaining,
+    totalCleared,
+    ...extra
+  };
+  csvRows.push(row);
+}
+
+/* ============ Helpers ============ */
+function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
+function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function sumObj(o){ return Object.values(o).reduce((a,b)=>a+b,0); }
+function maxObj(o){ return Math.max(...Object.values(o)); }
+function avgObj(o){ return Math.round(sumObj(o)/Object.keys(o).length); }
+
+/* ============ Decision Engine ============ */
+function chooseNextLane(){
+  // emergency preemption
+  if(emergencyRequested){
+    return {lane: emergencyRequested, reason: `🚑 Emergency priority for ${LANE_NAMES[emergencyRequested]}` , badge:"r"};
+  }
+
+  // fairness priority
+  const over = LANES.map(L=>({L,w:wait[L]})).filter(x=>x.w >= CFG.maxWait);
+  if(over.length){
+    over.sort((a,b)=>b.w-a.w);
+    const L = over[0].L;
+    return {lane:L, reason:`Fairness: ${LANE_NAMES[L]} waited ${wait[L]}s (≥ ${CFG.maxWait}s)`, badge:"p"};
+  }
+
+  if(mode === "FIXED"){
+    // round robin
+    const idx = (LANES.indexOf(activeLane)+1) % LANES.length;
+    const L = LANES[idx];
+    return {lane:L, reason:`Fixed cycle: Round-robin selection`, badge:"y"};
+  }
+
+  // SMART: max density
+  let best = "N";
+  for(const L of LANES){
+    if(queue[L] > queue[best]) best = L;
+  }
+  return {lane: best, reason:`Highest density: ${queue[best]} vehicles in ${LANE_NAMES[best]}`, badge:"g"};
+}
+
+function computeGreenTime(L){
+  if(mode === "FIXED") return CFG.fixedGreen;
+  const t = CFG.baseGreen + CFG.k * queue[L];
+  return clamp(t, CFG.minGreen, CFG.maxGreen);
+}
+
+/* ============ Signal lights rendering ============ */
+function setSignals(){
+  for(const L of LANES){
+    const bulbs = sig[L].querySelectorAll(".bulb");
+    const [r,y,g] = bulbs;
+    const isActive = (L===activeLane);
+
+    const redOn = (phase==="GREEN" && !isActive) || (phase==="YELLOW") || (phase==="PED") || (phase==="IDLE");
+    const yellowOn = (phase==="YELLOW" && isActive);
+    const greenOn = (phase==="GREEN" && isActive);
+
+    r.classList.toggle("on", redOn);
+    y.classList.toggle("on", yellowOn);
+    g.classList.toggle("on", greenOn);
+  }
+
+  zebra.style.opacity = (phase==="PED") ? "1" : ".6";
+  zebra.style.filter = (phase==="PED") ? "drop-shadow(0 0 18px rgba(255,204,0,.35))" : "none";
+}
+
+/* ============ Traffic generator ============ */
+function spawnTraffic(dt){
+  // dt in ms; spawnRate = avg per second distributed
+  const expected = spawnRate * (dt/1000);
+  let spawns = 0;
+  // poisson-ish: use fractional + randomness
+  if(Math.random() < expected) spawns += 1;
+  if(expected > 1 && Math.random() < (expected-1)) spawns += 1;
+
+  // sometimes add burst
+  if(spawnRate >= 5 && Math.random() < 0.15) spawns += 1;
+
+  for(let i=0;i<spawns;i++){
+    const L = LANES[randInt(0,3)];
+    queue[L] = clamp(queue[L] + 1, 0, 60);
+    spawnCarVisual(L, false);
+  }
+}
+
+/* ============ Clearing on green (with visual) ============ */
+function clearGreen(dt){
+  if(phase !== "GREEN") return;
+  // clearRate per second => convert by dt
+  const expectedClear = clearRate * (dt/1000);
+  let clears = 0;
+  if(Math.random() < expectedClear) clears += 1;
+  if(expectedClear > 1 && Math.random() < (expectedClear-1)) clears += 1;
+
+  const before = queue[activeLane];
+  const cleared = Math.min(before, clears);
+  if(cleared > 0){
+    queue[activeLane] -= cleared;
+    totalCleared += cleared;
+    // utilization useful second logic happens in sec tick
+    // remove a few car visuals from that lane
+    removeCarsFromLane(activeLane, cleared);
+  }
+}
+
+function updateWaitTimesOneSecond(){
+  for(const L of LANES){
+    const isActiveGreen = (phase==="GREEN" && L===activeLane);
+    if(isActiveGreen){
+      wait[L] = 0;
+    } else {
+      wait[L] = (queue[L] > 0) ? (wait[L]+1) : 0;
+    }
+  }
+}
+
+/* ============ Phase machine ============ */
+function startCycleIfIdle(){
+  if(phase !== "IDLE") return;
+  const dec = chooseNextLane();
+  activeLane = dec.lane;
+  const g = computeGreenTime(activeLane);
+  phase = "GREEN";
+  phaseRemaining = g;
+
+  decisionTitle.textContent = `GREEN → ${LANE_NAMES[activeLane]} (${g}s)`;
+  decisionReason.textContent = dec.reason;
+
+  log(`${LANE_NAMES[activeLane]} GREEN for <b>${g}s</b> <span class="badge ${dec.badge}">${mode}</span><br><span class="mono">Queues</span> [N:${queue.N} E:${queue.E} S:${queue.S} W:${queue.W}]`);
+  pushCSV("DECISION_GREEN", {reason: dec.reason});
+}
+
+function nextPhase(){
+  if(phase === "GREEN"){
+    phase = "YELLOW";
+    phaseRemaining = CFG.yellow;
+
+    decisionTitle.textContent = `YELLOW → ${LANE_NAMES[activeLane]} (${CFG.yellow}s)`;
+    decisionReason.textContent = `Safe transition (fixed yellow).`;
+    log(`${LANE_NAMES[activeLane]} YELLOW <b>${CFG.yellow}s</b> <span class="badge y">Y</span>`);
+    pushCSV("PHASE_YELLOW");
+    return;
+  }
+
+  if(phase === "YELLOW"){
+    // if pedestrian requested, insert PED phase
+    if(pedRequested){
+      phase = "PED";
+      pedRequested = false;
+      pedRemaining = 7; // ped crossing seconds
+      phaseRemaining = pedRemaining;
+
+      decisionTitle.textContent = `PEDESTRIAN CROSSING (${pedRemaining}s)`;
+      decisionReason.textContent = `All lanes RED for safe crossing.`;
+      log(`🚶 Pedestrian phase <b>${pedRemaining}s</b> <span class="badge p">PED</span>`);
+      pushCSV("PHASE_PED");
+      return;
+    }
+
+    // choose next lane
+    const dec = chooseNextLane();
+    activeLane = dec.lane;
+    const g = computeGreenTime(activeLane);
+    phase = "GREEN";
+    phaseRemaining = g;
+
+    // if emergency was served, clear the request after taking green
+    if(emergencyRequested && emergencyRequested === activeLane){
+      emergencyRequested = null;
+    }
+
+    decisionTitle.textContent = `GREEN → ${LANE_NAMES[activeLane]} (${g}s)`;
+    decisionReason.textContent = dec.reason;
+    log(`${LANE_NAMES[activeLane]} GREEN for <b>${g}s</b> <span class="badge ${dec.badge}">${mode}</span><br><span class="mono">Queues</span> [N:${queue.N} E:${queue.E} S:${queue.S} W:${queue.W}]`);
+    pushCSV("DECISION_GREEN", {reason: dec.reason});
+    return;
+  }
+
+  if(phase === "PED"){
+    // after ped, go to yellow->green decision
+    const dec = chooseNextLane();
+    activeLane = dec.lane;
+    const g = computeGreenTime(activeLane);
+    phase = "GREEN";
+    phaseRemaining = g;
+
+    decisionTitle.textContent = `GREEN → ${LANE_NAMES[activeLane]} (${g}s)`;
+    decisionReason.textContent = dec.reason;
+    log(`${LANE_NAMES[activeLane]} GREEN for <b>${g}s</b> <span class="badge ${dec.badge}">${mode}</span>`);
+    pushCSV("DECISION_GREEN", {reason: dec.reason});
+  }
+}
+
+/* ============ Cars visuals ============ */
+function arenaRect(){ return arena.getBoundingClientRect(); }
+
+function spawnCarVisual(lane, isEmergency){
+  const el = document.createElement("div");
+  el.className = "car";
+  if(Math.random() < 0.35) el.classList.add("alt");
+  if(isEmergency) el.classList.add("emg");
+
+  const id = ++carId;
+  el.dataset.id = String(id);
+
+  // initial t depends on lane to place behind stop line
+  const car = { id, lane, t: 0, el, isEmergency, alt: el.classList.contains("alt") };
+  cars.push(car);
+  carsLayer.appendChild(el);
+
+  // set initial pose
+  positionCar(car, true);
+}
+
+function removeCarsFromLane(lane, count){
+  // remove oldest cars of that lane (low t)
+  const laneCars = cars.filter(c=>c.lane===lane).sort((a,b)=>a.t-b.t);
+  for(let i=0;i<Math.min(count, laneCars.length);i++){
+    const c = laneCars[i];
+    c.el.remove();
+    const idx = cars.findIndex(x=>x.id===c.id);
+    if(idx>=0) cars.splice(idx,1);
+  }
+}
+
+function positionCar(c, initial=false){
+  // We'll use a simple param t in [0..1.2] moving towards intersection and then out.
+  // Car positions:
+  // N: from top to center then down
+  // S: from bottom to center then up
+  // E: from right to center then left
+  // W: from left to center then right
+
+  // stop line region:
+  const t = c.t;
+  const lane = c.lane;
+
+  // coordinates in percent of arena
+  // center at 50,50
+  let x=50, y=50, rot=0;
+
+  // movement path: approach (0..0.55), cross+exit (0.55..1.2)
+  if(lane==="N"){
+    x = 52;
+    y = 4 + t*96;
+    rot = 90;
+  } else if(lane==="S"){
+    x = 48;
+    y = 96 - t*96;
+    rot = -90;
+  } else if(lane==="E"){
+    x = 96 - t*96;
+    y = 52;
+    rot = 180;
+  } else if(lane==="W"){
+    x = 4 + t*96;
+    y = 48;
+    rot = 0;
+  }
+
+  // clamp
+  x = Math.max(-5, Math.min(105, x));
+  y = Math.max(-5, Math.min(105, y));
+
+  c.el.style.transform = `translate(${x}%, ${y}%) rotate(${rot}deg)`;
+  if(initial){
+    c.el.style.transform = `translate(${x}%, ${y}%) rotate(${rot}deg)`;
+  }
+}
+
+function animateCars(dt){
+  // car speed based on slider; dt ms
+  const v = (0.12 + speed*0.05) * (dt/1000); // t delta
+
+  // stop behavior: if red/yellow/ped for that lane, cars approach only up to stop line and hold.
+  // stop line approximations:
+  const stopT = {N:0.38, S:0.38, E:0.38, W:0.38};
+  const canGo = (L)=> (phase==="GREEN" && activeLane===L);
+
+  for(const c of cars){
+    const L = c.lane;
+    const allow = canGo(L);
+
+    // if not allowed, don't pass stopT
+    if(!allow){
+      c.t = Math.min(c.t + v, stopT[L]);
+    } else {
+      c.t = c.t + v;
+    }
+
+    positionCar(c);
+
+    // if car has exited (t > 1.15), remove it
+    if(c.t > 1.15){
+      c.el.remove();
+      const idx = cars.findIndex(x=>x.id===c.id);
+      if(idx>=0) cars.splice(idx,1);
+    }
+  }
+
+  // Ensure visuals roughly match queues: if queue grows and cars are fewer, spawn more visuals near back
+  for(const L of LANES){
+    const visualCount = cars.filter(c=>c.lane===L).length;
+    const target = Math.min(queue[L], 18); // cap visuals
+    if(visualCount < target){
+      // spawn some visual cars behind
+      const add = Math.min(target-visualCount, 2);
+      for(let i=0;i<add;i++) spawnCarVisual(L, false);
+    }
+    if(visualCount > target + 3){
+      removeCarsFromLane(L, visualCount - target);
+    }
+  }
+}
+
+/* ============ UI render ============ */
+function renderUI(){
+  sysState.textContent = running ? "Running" : "Stopped";
+  liveDot.style.background = running ? "var(--green)" : "var(--red)";
+  liveDot.style.boxShadow = running ? "0 0 12px rgba(32,255,135,.7)" : "0 0 12px rgba(255,59,59,.6)";
+
+  modeText.textContent = mode;
+  phaseText.textContent = phase;
+  activeText.textContent = (phase==="IDLE" || phase==="PED") ? "—" : `${activeLane} (${LANE_NAMES[activeLane]})`;
+  countdownEl.textContent = (phase==="IDLE") ? "—" : `${phaseRemaining}s`;
+
+  qN.textContent = queue.N; qE.textContent = queue.E; qS.textContent = queue.S; qW.textContent = queue.W;
+
+  // KPI
+  avgWaitEl.textContent = `${avgObj(wait)}s`;
+  maxWaitEl.textContent = `${maxObj(wait)}s`;
+  throughputEl.textContent = totalCleared;
+
+  const util = greenSecondsTotal===0 ? 0 : Math.round((greenUsefulSeconds/greenSecondsTotal)*100);
+  utilEl.textContent = `${util}%`;
+
+  // Bars
+  barsEl.innerHTML = "";
+  const maxQ = Math.max(10, ...LANES.map(L=>queue[L]));
+  for(const L of LANES){
+    const row = document.createElement("div");
+    row.className = "barRow";
+    const pct = Math.round((queue[L]/maxQ)*100);
+    row.innerHTML = `
+      <div class="name">${L} <span class="tiny">${LANE_NAMES[L]}</span></div>
+      <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+      <div class="num">${queue[L]}</div>
+    `;
+    barsEl.appendChild(row);
+  }
+
+  setSignals();
+}
+
+/* ============ Main loop ============ */
+let lastTs = null;
+function frame(ts){
+  if(!running){
+    lastTs = ts;
+    requestAnimationFrame(frame);
+    return;
+  }
+  if(lastTs === null) lastTs = ts;
+  const dt = ts - lastTs;
+  lastTs = ts;
+
+  // simulation tick: spawn + clear + animate
+  spawnTraffic(dt);
+  clearGreen(dt);
+  animateCars(dt);
+
+  // 1-second phase countdown & stats
+  secAccumulator += dt;
+  while(secAccumulator >= UI_SECOND){
+    secAccumulator -= UI_SECOND;
+
+    if(phase === "GREEN"){
+      greenSecondsTotal += 1;
+      if(queue[activeLane] > 0) greenUsefulSeconds += 1;
+    }
+
+    updateWaitTimesOneSecond();
+
+    if(phase !== "IDLE"){
+      phaseRemaining = Math.max(0, phaseRemaining - 1);
+      if(phaseRemaining === 0){
+        nextPhase();
+      }
+    } else {
+      startCycleIfIdle();
+    }
+
+    pushCSV("TICK");
+  }
+
+  renderUI();
+  requestAnimationFrame(frame);
+}
+
+/* ============ Controls ============ */
+document.getElementById("startBtn").addEventListener("click", ()=>{
+  if(!running){
+    running = true;
+    phase = "IDLE";
+    phaseRemaining = 0;
+    secAccumulator = 0;
+    log(`System started <span class="badge g">RUN</span>`);
+    pushCSV("START");
+    renderUI();
+  }
+});
+document.getElementById("pauseBtn").addEventListener("click", ()=>{
+  running = false;
+  log(`System paused <span class="badge y">PAUSE</span>`);
+  pushCSV("PAUSE");
+  renderUI();
+});
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  running = false;
+  mode = "SMART";
+  phase = "IDLE";
+  activeLane = "N";
+  phaseRemaining = 0;
+  secAccumulator = 0;
+
+  queue = {N:7, E:4, S:6, W:3};
+  wait  = {N:0, E:0, S:0, W:0};
+  totalCleared = 0;
+  greenSecondsTotal = 0;
+  greenUsefulSeconds = 0;
+
+  emergencyRequested = null;
+  pedRequested = false;
+  pedRemaining = 0;
+
+  // clear cars
+  cars.splice(0, cars.length);
+  carsLayer.innerHTML = "";
+
+  // clear logs
+  logBody.innerHTML = "";
+  csvRows.splice(0, csvRows.length);
+
+  decisionTitle.textContent = "—";
+  decisionReason.textContent = "—";
+
+  document.getElementById("smartBtn").classList.add("active");
+  document.getElementById("fixedBtn").classList.remove("active");
+
+  log(`Reset complete <span class="badge r">RESET</span>`);
+  pushCSV("RESET");
+  renderUI();
+});
+
+document.getElementById("smartBtn").addEventListener("click", ()=>{
+  mode = "SMART";
+  document.getElementById("smartBtn").classList.add("active");
+  document.getElementById("fixedBtn").classList.remove("active");
+  log(`Mode switched to <b>SMART</b> <span class="badge g">AI</span>`);
+  pushCSV("MODE_SMART");
+  renderUI();
+});
+document.getElementById("fixedBtn").addEventListener("click", ()=>{
+  mode = "FIXED";
+  document.getElementById("fixedBtn").classList.add("active");
+  document.getElementById("smartBtn").classList.remove("active");
+  log(`Mode switched to <b>FIXED</b> <span class="badge y">RR</span>`);
+  pushCSV("MODE_FIXED");
+  renderUI();
+});
+
+document.getElementById("emgBtn").addEventListener("click", ()=>{
+  // choose the most congested lane as emergency lane for dramatic effect
+  let best = "N";
+  for(const L of LANES) if(queue[L] > queue[best]) best = L;
+
+  emergencyRequested = best;
+  // spawn a visible emergency car
+  spawnCarVisual(best, true);
+
+  // preempt: go to yellow quickly if currently green on other lane
+  if(phase === "GREEN" && activeLane !== best){
+    phase = "YELLOW";
+    phaseRemaining = 1;
+  } else if(phase === "IDLE"){
+    // will be handled by chooser
+  }
+  log(`🚑 Emergency requested for <b>${LANE_NAMES[best]}</b> <span class="badge r">PRIORITY</span>`);
+  pushCSV("EMERGENCY", {lane: best});
+  renderUI();
+});
+
+document.getElementById("pedBtn").addEventListener("click", ()=>{
+  pedRequested = true;
+  // insert after yellow; if idle -> start then it will come after first yellow
+  if(phase === "IDLE"){
+    startCycleIfIdle();
+  }
+  log(`🚶 Pedestrian requested <span class="badge p">NEXT</span>`);
+  pushCSV("PED_REQUEST");
+  renderUI();
+});
+
+document.getElementById("clearLogBtn").addEventListener("click", ()=> logBody.innerHTML = "");
+
+document.getElementById("exportBtn").addEventListener("click", ()=>{
+  if(csvRows.length === 0){
+    log(`Nothing to export <span class="badge y">EMPTY</span>`);
+    return;
+  }
+  const headers = Object.keys(csvRows[0]);
+  const lines = [headers.join(",")];
+  for(const r of csvRows){
+    const line = headers.map(h => {
+      const v = (r[h] ?? "").toString().replaceAll('"','""');
+      return `"${v}"`;
+    }).join(",");
+    lines.push(line);
+  }
+  const blob = new Blob([lines.join("\n")], {type:"text/csv"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `smart_traffic_logs_${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  log(`CSV exported <span class="badge g">DONE</span>`);
+});
+
+document.getElementById("spawnRate").addEventListener("input", (e)=>{
+  spawnRate = +e.target.value;
+  document.getElementById("spawnVal").textContent = spawnRate;
+});
+document.getElementById("clearRate").addEventListener("input", (e)=>{
+  clearRate = +e.target.value;
+  document.getElementById("clearVal").textContent = clearRate;
+});
+document.getElementById("speed").addEventListener("input", (e)=>{
+  speed = +e.target.value;
+  document.getElementById("speedVal").textContent = speed;
+});
+
+/* ============ Init ============ */
+function init(){
+  // seed visuals to match initial queues
+  for(const L of LANES){
+    const count = Math.min(queue[L], 12);
+    for(let i=0;i<count;i++) spawnCarVisual(L, false);
+  }
+  renderUI();
+  requestAnimationFrame(frame);
+  pushCSV("INIT");
+  log(`Ready. Hit <b>Start</b> to run. <span class="badge g">READY</span>`);
+}
+init();
+</script>
+</body>
+</html>
